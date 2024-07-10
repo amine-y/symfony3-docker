@@ -30,30 +30,30 @@ RUN apt-get -y install \
     nano \
     ffmpeg \
     mysql-client \
-	php7.4 \
-	php7.4-common \
-	php7.4-mysql \
-	php7.4-xml \
-	php7.4-xmlrpc \
-	php7.4-curl \
-	php7.4-gd \
-	php7.4-imagick \
-	php7.4-cli \
-	php7.4-dev \
-	php7.4-imap \
-	php7.4-sqlite3 \
-	php7.4-mbstring \
-	php7.4-opcache \
-	php7.4-soap \
-	php7.4-zip \
-	php7.4-intl \
-	php7.4-ctype \
-	php7.4-dom \
-	php7.4-iconv \
-	php7.4-simplexml \
-	php7.4-xsl \
-	php7.4-ssh2 \
-	php7.4-bcmath \
+	php7.3 \
+	php7.3-common \
+	php7.3-mysql \
+	php7.3-xml \
+	php7.3-xmlrpc \
+	php7.3-curl \
+	php7.3-gd \
+	php7.3-imagick \
+	php7.3-cli \
+	php7.3-dev \
+	php7.3-imap \
+	php7.3-sqlite3 \
+	php7.3-mbstring \
+	php7.3-opcache \
+	php7.3-soap \
+	php7.3-zip \
+	php7.3-intl \
+	php7.3-ctype \
+	php7.3-dom \
+	php7.3-iconv \
+	php7.3-simplexml \
+	php7.3-xsl \
+	php7.3-ssh2 \
+	php7.3-bcmath \
 	ruby-full \
 	libnss3 \
 	libxss1 \
@@ -72,13 +72,6 @@ RUN npm install -g uglify-js
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-# install ionCube
-RUN wget https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz
-RUN tar -xvzf ioncube_loaders_lin_x86-64.tar.gz
-RUN cp ioncube/ioncube_loader_lin_7.4.so /usr/lib/php/20190902
-#COPY bolt.so  /usr/lib/php/20180731/bolt.so
-RUN echo "zend_extension=ioncube_loader_lin_7.4.so" >> /etc/php/7.4/cli/php.ini
-#RUN echo "zend_extension=bolt.so" >> /etc/php/7.3/cli/php.ini
 
 #Set up SSH access
 RUN mkdir /var/run/sshd
