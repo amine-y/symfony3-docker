@@ -98,17 +98,15 @@ RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 
-EXPOSE 22
+EXPOSE 22 3306 33060
 COPY docker-entrypoint.sh /
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["/usr/bin/supervisord"]
+
 
 # MYSQL commands
 VOLUME /var/lib/mysql
 
 COPY config/ /etc/mysql/
 COPY docker-entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh", "/entrypoint.sh"]
 
-EXPOSE 3306 33060
-CMD ["mysqld"]
+CMD ["/usr/bin/supervisord", "mysqld"]
