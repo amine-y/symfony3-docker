@@ -7,9 +7,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV SSHPASS_ENV="s654df65sd4f5s46df5"
 #MYSQL variables
 ENV DATE_TIMEZONE UTC
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN groupadd -r mysql && useradd -r -g mysql mysql
 
 # Try to fix failures  ERROR: executor failed running [
 ENV DOCKER_BUILDKIT=0
@@ -78,16 +75,6 @@ RUN apt install nodejs
 RUN npm install -g requirejs
 RUN npm install -g uglify-js
 
-# Install MYSQL
-RUN apt-get update && apt-get install -y \
-    mysql-server \
-    mysql-client \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /var/lib/mysql \
-    && mkdir -p /var/lib/mysql /var/run/mysqld \
-	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld \
-	&& chmod 1777 /var/lib/mysql /var/run/mysqld
-
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -97,16 +84,34 @@ RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Install MYSQL
+WORKDIR /workspaces/symfony3-docker
 
-EXPOSE 22 3306 33060
+RUN groupadd -r mysql && useradd -r -g mysql mysql
+RUN apt-get update && apt-get install -y \
+    mysql-server \
+    mysql-client \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /var/lib/mysql \
+    && mkdir -p /var/lib/mysql /var/run/mysqld \
+	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld \
+	&& chmod 1777 /var/lib/mysql /var/run/mysqld
+
 COPY docker-entrypoint.sh /
 
 
 # MYSQL commands
 VOLUME /var/lib/mysql
 
+RUN /bin/bash -c 'chmod +x /docker-entrypoint.sh'
+
 COPY config/ /etc/mysql/
-COPY docker-entrypoint.sh /entrypoint.sh
+COPY ./docker-entrypoint.sh /entrypoint.sh
+
+RUN /bin/bash -c 'chmod +x /entrypoint.sh'
+
 ENTRYPOINT ["/docker-entrypoint.sh", "/entrypoint.sh"]
+
+EXPOSE 22 3306 33060
 
 CMD ["/usr/bin/supervisord", "mysqld"]
